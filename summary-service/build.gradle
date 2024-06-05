@@ -28,8 +28,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
-    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
-    implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.2'
+    // Update jjwt dependency to the latest version
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3' // for JSON processing
 
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
