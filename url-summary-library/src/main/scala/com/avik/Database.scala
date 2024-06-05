@@ -25,6 +25,11 @@ object Database {
   val config = ConfigFactory.load()
   val db = SlickDatabase.forConfig("db", config)
 
+  sys.addShutdownHook {
+    db.close()
+    println("Database connection closed.")
+  }
+
   val responseHistory = TableQuery[ResponseHistoryTable]
 
   def createSchema()(implicit ec: ExecutionContext): Future[Unit] = {
