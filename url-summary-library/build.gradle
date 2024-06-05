@@ -1,5 +1,10 @@
 plugins {
     id 'scala'
+    id 'application'
+}
+
+application {
+    mainClass = 'com.avik.UrlSummaryLib'
 }
 
 group 'com.avik'
@@ -10,8 +15,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.scala-lang:scala3-library:3.3.0'
-//    implementation 'com.softwaremill.sttp.client3:core:3.7.0'
+    implementation 'org.scala-lang:scala3-library_3:3.3.0'
 
     // https://mvnrepository.com/artifact/com.softwaremill.sttp.client3/core
     implementation 'com.softwaremill.sttp.client3:core_3:3.9.7'
@@ -19,27 +23,21 @@ dependencies {
     // https://mvnrepository.com/artifact/com.softwaremill.sttp.client3/async-http-client-backend-future
     implementation 'com.softwaremill.sttp.client3:async-http-client-backend-future_3:3.9.7'
 
-
-    // https://mvnrepository.com/artifact/io.circe/circe-parser
-    implementation 'io.circe:circe-parser_3:0.14.7'
-
-    // https://mvnrepository.com/artifact/io.circe/circe-core
-    implementation 'io.circe:circe-core_3:0.14.7'
-
-    // https://mvnrepository.com/artifact/io.circe/circe-generic
-    implementation 'io.circe:circe-generic_3:0.14.7'
-
-
-//    implementation 'io.circe:circe-core_2.13:0.14.1'
-//    implementation 'io.circe:circe-generic_2.13:0.14.1'
-//    implementation 'io.circe:circe-parser_2.13:0.14.1'
-
-//    implementation 'com.softwaremill.sttp.client3:async-http-client-backend-future:3.7.0'
+    // https://mvnrepository.com/artifact/com.softwaremill.sttp.client3/circe
+    implementation 'com.softwaremill.sttp.client3:circe_3:3.9.7'
 
     implementation 'org.postgresql:postgresql:42.5.0'
-    implementation 'com.typesafe.slick:slick_3.3.3:3.3.3'
-    implementation 'com.typesafe.slick:slick-hikaricp_3.3.3:3.3.3'
+
+    // https://mvnrepository.com/artifact/com.typesafe.slick/slick
+    implementation 'com.typesafe.slick:slick_3:3.5.1'
+
+    // https://mvnrepository.com/artifact/com.typesafe.slick/slick-hikaricp
+    implementation 'com.typesafe.slick:slick-hikaricp_3:3.5.1'
+
     implementation 'com.typesafe:config:1.4.2'
+    implementation 'io.circe:circe-core_3:0.14.5'
+    implementation 'io.circe:circe-generic_3:0.14.5'
+    implementation 'io.circe:circe-parser_3:0.14.5'
     testImplementation 'org.scalatest:scalatest_3:3.2.14'
     testImplementation 'org.scalatestplus:junit-4-13_3:3.2.14.0'
 }
