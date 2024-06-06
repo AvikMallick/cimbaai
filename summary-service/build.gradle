@@ -20,7 +20,11 @@ configurations {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
+//    maven {
+//        url '../url-summary-library/build/repo' // Update this path to the correct location of your Scala service
+//    }
 }
 
 dependencies {
@@ -28,10 +32,16 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    // Ensure this matches the Scala project details
+    implementation 'com.avik:scala-summary-service:0.1.0-SNAPSHOT'
+
     // Update jjwt dependency to the latest version
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3' // for JSON processing
+
+    implementation 'org.scala-lang.modules:scala-java8-compat_2.13:1.0.0'
+
 
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
