@@ -3,8 +3,9 @@ package com.cimba.summaryservice.controller;
 import com.avik.summaryservice.SummaryService;
 
 import com.cimba.summaryservice.model.RequestDTO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.cimba.summaryservice.service.SummaryAsyncService;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.concurrent.DelegatingSecurityContextExecutorService;
@@ -19,42 +20,80 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+//@RestController
+//public class SummaryController {
+//
+//    @PostConstruct
+//    public void init() {
+//        // Set the SecurityContextHolder strategy to MODE_INHERITABLETHREADLOCAL
+//        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+//    }
+//
+//    @PostMapping("/get-summary")
+//    public ResponseEntity<String> getSummary(@RequestBody RequestDTO requestDTO) {
+//        // Get the authenticated user's username
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String username = authentication.getName();
+//
+//        // Create an ExecutorService with a fixed thread pool
+//        ExecutorService executorService = Executors.newFixedThreadPool(10);
+//
+//        // Wrap the ExecutorService in a DelegatingSecurityContextExecutorService
+//        ExecutorService delegatingExecutorService = new DelegatingSecurityContextExecutorService(executorService);
+//
+//        // Create an ExecutionContext from the ExecutorService
+//        ExecutionContextExecutor executionContext = ExecutionContext.fromExecutor(delegatingExecutorService);
+//
+//        // Pass the ExecutionContext as the second argument to the fetchAndSaveSummary method
+//        CompletableFuture<String> futureSummary =
+//                SummaryService.fetchAndSaveSummary(requestDTO.getUrl(), username, executionContext);
+//
+//        try {
+//            // Fetch and save summary asynchronously
+//            return futureSummary.thenApply(ResponseEntity::ok).exceptionally(ex -> {
+//                System.out.println("****ERROR***");
+//                System.out.println(ex.getMessage());
+//            if(ex.getMessage().contains("404")) {
+//                return new ResponseEntity<>("The given URL is not found", HttpStatus.NOT_FOUND);
+//            }
+//            return new ResponseEntity<>("Error fetching summary: " + ex.getMessage(),
+//                    HttpStatus.INTERNAL_SERVER_ERROR);
+//        }).get();
+//        } catch (InterruptedException | ExecutionException e) {
+//            System.out.println("****ERROR 2***");
+//            System.out.println(e.getMessage());
+//            throw new RuntimeException("Error fetching summary. Server Error: ", e);
+//        } finally {
+//            // Shut down the ExecutorService
+//            executorService.shutdown();
+//        }
+//    }
+//}
+
 @RestController
+@RequiredArgsConstructor
 public class SummaryController {
+
+    private final SummaryAsyncService summaryAsyncService;
 
     @PostMapping("/get-summary")
     public ResponseEntity<String> getSummary(@RequestBody RequestDTO requestDTO) {
         // Get the authenticated user's username
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        
-        // Create an ExecutorService with a fixed thread pool
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
 
-        // Wrap the ExecutorService in a DelegatingSecurityContextExecutorService
-        ExecutorService delegatingExecutorService = new DelegatingSecurityContextExecutorService(executorService);
-
-        // Create an ExecutionContext from the ExecutorService
-        ExecutionContextExecutor executionContext = ExecutionContext.fromExecutor(delegatingExecutorService);
-
-        // Pass the ExecutionContext as the second argument to the fetchAndSaveSummary method
-        CompletableFuture<String> futureSummary =
-                SummaryService.fetchAndSaveSummary(requestDTO.getUrl(), username, executionContext);
+        // Fetch and save summary asynchronously using the async service
+        CompletableFuture<String> futureSummary = summaryAsyncService.fetchSummaryAsync(requestDTO, username);
 
         try {
-            // Fetch and save summary asynchronously
             return futureSummary.thenApply(ResponseEntity::ok).exceptionally(ex -> {
-                System.out.println("****ERROR***");
-                System.out.println(ex.getMessage());
-            if(ex.getMessage().contains("404")) {
-                return new ResponseEntity<>("The given URL is not found", HttpStatus.NOT_FOUND);
-            }
-            return new ResponseEntity<>("Error fetching summary: " + ex.getMessage(),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }).get();
+                if (ex.getMessage().contains("404")) {
+                    return new ResponseEntity<>("The given URL is not found", HttpStatus.NOT_FOUND);
+                }
+                return new ResponseEntity<>("Error fetching summary: " + ex.getMessage(),
+                        HttpStatus.INTERNAL_SERVER_ERROR);
+            }).get();
         } catch (InterruptedException | ExecutionException e) {
-            System.out.println("****ERROR 2***");
-            System.out.println(e.getMessage());
             throw new RuntimeException("Error fetching summary. Server Error: ", e);
         }
     }

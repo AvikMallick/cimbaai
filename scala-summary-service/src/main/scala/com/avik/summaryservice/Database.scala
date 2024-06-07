@@ -1,18 +1,37 @@
 package com.avik.summaryservice
 
-import slick.jdbc.PostgresProfile.api.{Database => SlickDatabase}
-import slick.jdbc.PostgresProfile.api._
-import scala.concurrent.{Future, ExecutionContext}
+import slick.jdbc.PostgresProfile.api.Database as SlickDatabase
+import slick.jdbc.PostgresProfile.api.*
+
+import scala.concurrent.{ExecutionContext, Future}
 import slick.jdbc.meta.MTable
 import org.slf4j.LoggerFactory
 
-case class Summary(url: String, content: String)
+import java.sql.Timestamp
+import java.time.Instant
+
+//case class Summary(url: String, username: String, content: String)
+case class Summary(url: String, username: String, content: String, timestamp: Timestamp = Timestamp
+  .from(Instant.now()))
+
+//class Summaries(tag: Tag) extends Table[Summary](tag, "summaries") {
+//  def url = column[String]("url", O.PrimaryKey)
+//  def username = column[String]("username")
+//  def content = column[String]("content")
+//
+//  def * = (url, username, content) <> ((Summary.apply _).tupled, Summary.unapply)
+//}
 
 class Summaries(tag: Tag) extends Table[Summary](tag, "summaries") {
-  def url = column[String]("url", O.PrimaryKey)
+  def url = column[String]("url")
+  def username = column[String]("username")
   def content = column[String]("content")
+  def timestamp = column[Timestamp]("timestamp", O.Default(Timestamp.from(Instant.now())))
 
-  def * = (url, content) <> ((Summary.apply _).tupled, Summary.unapply)
+  def * = (url, username, content, timestamp) <> ((Summary.apply _).tupled, Summary.unapply)
+
+  // Define the primary key as a combination of url and username
+  def pk = primaryKey("pk_summaries", (url, username, timestamp))
 }
 
 object Database {

@@ -60,7 +60,7 @@ object SummaryService {
     val scalaFuture = (for {
       _ <- Database.initSchema
       summary <- getSummary(url)
-      _ <- Database.saveSummary(Summary(url, summary))
+      _ <- Database.saveSummary(Summary(url, username, summary))
     } yield summary).recoverWith {
       case ex: Exception =>
         Future.failed(ex)
