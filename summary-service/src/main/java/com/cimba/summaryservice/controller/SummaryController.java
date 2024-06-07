@@ -36,7 +36,10 @@ public class SummaryController {
 
         try {
             // Fetch and save summary asynchronously
-            return futureSummary.get();
+            return futureSummary.exceptionally(ex -> {
+                logger.error("Error fetching summary handled", ex);
+                return "Error fetching summary. The ex ->" + ex;
+            }).get();
         } catch (InterruptedException | ExecutionException e) {
             logger.error("Error fetching summary", e);
             throw new RuntimeException("Error fetching summary", e);
