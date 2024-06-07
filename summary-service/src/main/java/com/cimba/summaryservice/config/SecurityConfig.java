@@ -42,12 +42,13 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
-//                        req->req.requestMatchers("/login/**", "/register/**", "/refresh_token/**")
-//                                .permitAll()
-//                                .requestMatchers("/get-summary").hasAnyRole(Role.USER.name())
-//                                .anyRequest()
-//                                .authenticated()
-                        req -> req.anyRequest().permitAll()
+                        req->req.requestMatchers("/login/**", "/register/**", "/refresh_token/**"
+                                        , "/validate_token")
+                                .permitAll()
+                                .requestMatchers("/get-summary").hasAnyRole(Role.USER.name())
+                                .anyRequest()
+                                .authenticated()
+//                        req -> req.anyRequest().permitAll()
                 ).userDetailsService(userDetailsServiceImp)
                 .sessionManagement(session->session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

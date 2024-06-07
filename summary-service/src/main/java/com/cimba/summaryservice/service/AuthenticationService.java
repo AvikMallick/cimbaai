@@ -1,6 +1,7 @@
 package com.cimba.summaryservice.service;
 
 import com.cimba.summaryservice.model.AuthenticationResponse;
+import com.cimba.summaryservice.model.Role;
 import com.cimba.summaryservice.model.Token;
 import com.cimba.summaryservice.model.User;
 import com.cimba.summaryservice.repository.TokenRepository;
@@ -54,7 +55,7 @@ public class AuthenticationService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
 
-        user.setRole(request.getRole());
+        user.setRole(Role.USER);
 
         user = repository.save(user);
 

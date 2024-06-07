@@ -97,4 +97,9 @@ public class SummaryController {
             throw new RuntimeException("Error fetching summary. Server Error: ", e);
         }
     }
+
+    @GetMapping("/get-request-history")
+    public ResponseEntity<String> getRequestHistory() {
+        return ResponseEntity.ok("demo request history");
+    }
 }
