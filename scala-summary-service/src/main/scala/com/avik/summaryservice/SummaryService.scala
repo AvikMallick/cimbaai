@@ -16,7 +16,7 @@ object SummaryService {
   def getSummary(url: String)(implicit ec: ExecutionContext): Future[String] = {
     val request = basicRequest.get(uri"${Config.Api.fastApiUrl}/summary?url=$url")
 
-    request.send().flatMap { response =>
+    request.send(backend).flatMap { response =>
       response.body match {
         case Right(body) =>
           decode[Map[String, String]](body) match {

@@ -5,6 +5,7 @@ import com.avik.summaryservice.SummaryService;
 import com.cimba.summaryservice.model.RequestDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.concurrent.DelegatingSecurityContextExecutorService;
 import org.springframework.web.bind.annotation.*;
 import scala.concurrent.ExecutionContext;
 import scala.concurrent.ExecutionContextExecutor;
@@ -23,8 +24,11 @@ public class SummaryController {
         // Create an ExecutorService with a fixed thread pool
         ExecutorService executorService = Executors.newFixedThreadPool(10);
 
+        // Wrap the ExecutorService in a DelegatingSecurityContextExecutorService
+        ExecutorService delegatingExecutorService = new DelegatingSecurityContextExecutorService(executorService);
+
         // Create an ExecutionContext from the ExecutorService
-        ExecutionContextExecutor executionContext = ExecutionContext.fromExecutor(executorService);
+        ExecutionContextExecutor executionContext = ExecutionContext.fromExecutor(delegatingExecutorService);
 
         // Pass the ExecutionContext as the second argument to the fetchAndSaveSummary method
         CompletableFuture<String> futureSummary =
@@ -36,20 +40,6 @@ public class SummaryController {
         } catch (InterruptedException | ExecutionException e) {
             logger.error("Error fetching summary", e);
             throw new RuntimeException("Error fetching summary", e);
-        } finally {
-            // Ensure resources are closed
-            SummaryService.shutdown();
         }
     }
 }
-
-
-//@PostMapping("/summary")
-//    public CompletableFuture<String> getUrlSummary(@RequestBody RequestDTO requestDTO) {
-//        System.out.println("Received request to fetch summary for: " + requestDTO.getUrl());
-//        return urlSummaryService.getSummary(requestDTO.getUrl())
-//                .exceptionally(ex -> {
-//                    // Handle exceptions
-//                    return "Failed to fetch summary: " + ex.getMessage();
-//                });
-//    }
