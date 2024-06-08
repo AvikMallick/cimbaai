@@ -4,6 +4,7 @@ import api from "../api";
 import Logout from "../components/Logout";
 import { SummaryResponse } from "../models/responseModels";
 import SummaryHistoryItem from "../components/SummaryHistoryItem";
+import { extractTime } from "../utils/TimeExtractor";
 
 const Dashboard = () => {
 	const [url, setUrl] = useState("");
@@ -119,7 +120,7 @@ const Dashboard = () => {
 					<button
 						type="submit"
 						className={`w-full bg-blue-500 text-white p-2 rounded ${
-							responseLoading ? "bg-zinc-700" : ""
+							responseLoading ? "bg-zinc-700 hover:cursor-not-allowed" : ""
 						}`}
 						disabled={responseLoading}
 					>
@@ -139,17 +140,22 @@ const Dashboard = () => {
 				>
 					{summaryResponse ? (
 						<div>
-							<div className="h-3 mb-6 text-md font-bold">
-								Summary for the website:{" "}
-								<span className="text-lg text-blue-600">
-									{" "}
-									{summaryResponse.url}{" "}
-								</span>
+							<div className="flex justify-between">
+								<div className="h-3 mb-6 text-md font-bold">
+									Summary for the website:{" "}
+									<span className="text-lg text-blue-600">
+										{" "}
+										{summaryResponse.url}{" "}
+									</span>
+								</div>
+								<div className="text-violet-700 font-semibold">
+									Time: {extractTime(summaryResponse.timestamp)}
+								</div>
 							</div>
 							<div>{summaryResponse.content}</div>
 						</div>
 					) : (
-						"Enter some URL to get the summary"
+						"Enter a URL to get the summary"
 					)}
 				</div>
 			</div>
