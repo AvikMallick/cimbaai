@@ -82,20 +82,21 @@ const Dashboard = () => {
 			{/* Flex container for side-by-side layout */}
 			<div className="w-full md:w-1/3 bg-white p-6 rounded shadow-md mx-2 my-4">
 				{" "}
-				{/* Request history takes 30% width */}
-				{/* Place your request history component or HTML here */}
+				{/* All request history */}
 				<div>Request History</div>
-				<ul>
-					{requestHistory.map((req, ind) => (
-						<SummaryHistoryItem
-							active={`${summaryResponse?.id === req.id ? "true" : "false"}`}
-							key={req.id}
-							req={req}
-							ind={ind}
-							handleHistoryItemClick={handleHistoryItemClick}
-						/>
-					))}
-				</ul>
+				<div className="overflow-auto p-2" style={{ maxHeight: "600px" }}>
+					<ul>
+						{requestHistory.map((req, ind) => (
+							<SummaryHistoryItem
+								active={`${summaryResponse?.id === req.id ? "true" : "false"}`}
+								key={req.id}
+								req={req}
+								ind={ind}
+								handleHistoryItemClick={handleHistoryItemClick}
+							/>
+						))}
+					</ul>
+				</div>
 			</div>
 			<div className="w-2/3 p-4">
 				{" "}
