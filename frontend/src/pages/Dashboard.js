@@ -5,6 +5,7 @@ import Logout from "../components/Logout";
 import { SummaryResponse } from "../models/responseModels";
 import SummaryHistoryItem from "../components/SummaryHistoryItem";
 import { extractTime } from "../utils/TimeExtractor";
+import Spinner from "../components/Spinner";
 
 const Dashboard = () => {
 	const [url, setUrl] = useState("");
@@ -125,7 +126,10 @@ const Dashboard = () => {
 						}`}
 						disabled={responseLoading}
 					>
-						{responseLoading ? "Loading..." : "Submit"}
+						<div className="flex justify-center items-center">
+							<div>{responseLoading ? "Loading" : "Submit"}</div>
+							<div className="px-3">{responseLoading && <Spinner />}</div>
+						</div>
 					</button>
 				</form>
 				{/* Conditional Error Message */}

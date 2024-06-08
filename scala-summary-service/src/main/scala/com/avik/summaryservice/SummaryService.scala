@@ -32,11 +32,11 @@ object SummaryService {
                 // If the decoding is successful, return the summary
                 Future.successful(json("summary"))
               case Left(error) =>
-                // If there's an error decoding the JSON, log the error and return a failed Future
+                // If there's an error decoding the JSON, return a failed Future
                 Future.failed(new Exception(error))
             }
           case Left(error) =>
-            // If there's an error in the HTTP response, log the error and return a failed Future
+            // If there's an error in the HTTP response, return a failed Future
             Future.failed(new Exception(error))
         }
       } else {
@@ -45,7 +45,7 @@ object SummaryService {
           // If the status code is 404, return a personalized message
           Future.failed(new Exception("404"))
         } else {
-          // If the status code is not 404, log the status and return a failed Future
+          // If the status code is not 404, return a failed Future
           Future.failed(new Exception(response.statusText))
         }
       }
@@ -72,6 +72,7 @@ object SummaryService {
 
   def fetchSummariesByUsername(username: String)(implicit ec: ExecutionContext):
   CompletableFuture[JList[Summary]] = {
+    // _.toList.asJava is equivalent to (summaries: Seq[Summary]) => summaries.toList.asJava
     val scalaFuture = Database.fetchSummariesByUsername(username).map(_.toList.asJava).recoverWith {
       case ex: Exception =>
         Future.failed(ex)
