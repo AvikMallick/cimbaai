@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
 import api from "../api";
 import Logout from "../components/Logout";
+import { SummaryResponse } from "../models/responseModels";
+import SummaryHistoryItem from "../components/SummaryHistoryItem";
 
 const Dashboard = () => {
 	const [url, setUrl] = useState("");
-	const [lastRequestedUrl, setlastRequestedUrl] = useState("");
 	const [requestHistory, setRequestHistory] = useState([]);
 	const [responseLoading, setResponseLoading] = useState(false);
-	const [apiResponse, setApiResponse] = useState(null); // State for storing API response
+	const [summaryResponse, setSummaryResponse] = useState(null); // State for storing current summary
 	const [invalidUrl, setInvalidUrl] = useState(false);
 
 	// const navigate = useNavigate();
@@ -18,8 +19,19 @@ const Dashboard = () => {
 		const fetchRequests = async () => {
 			try {
 				const response = await api.get("/get-summary-history");
-				console.log("All Summaries: ", response.data);
-				// setRequestHistory(response);
+
+				const allRequestHistory = response.data.map(
+					(summary) =>
+						new SummaryResponse(
+							summary.id,
+							summary.url,
+							summary.username,
+							summary.content,
+							summary.timestamp
+						)
+				);
+
+				setRequestHistory(allRequestHistory);
 			} catch (error) {
 				console.error(error);
 			}
@@ -31,16 +43,25 @@ const Dashboard = () => {
 	const handleRequest = async (e) => {
 		e.preventDefault();
 		try {
-			console.log("url: ", url);
-			setApiResponse(null);
+			setSummaryResponse(null);
 			setResponseLoading(true);
 			const response = await api.post("/get-summary", { url });
+
+			const currentSummaryResponse = new SummaryResponse(
+				response.data.id,
+				response.data.url,
+				response.data.username,
+				response.data.content,
+				response.data.timestamp
+			);
+			setSummaryResponse(currentSummaryResponse);
+
+			setRequestHistory((prev) => [currentSummaryResponse, ...prev]);
+			console.log(setRequestHistory);
+
+			setUrl("");
 			setResponseLoading(false);
 			setInvalidUrl(false);
-			setApiResponse(response.data);
-			setRequestHistory((prev) => [...prev, response.data]);
-			setlastRequestedUrl(url);
-			setUrl("");
 		} catch (error) {
 			setResponseLoading(false);
 			console.error(error);
@@ -48,6 +69,10 @@ const Dashboard = () => {
 				setInvalidUrl(true);
 			}
 		}
+	};
+
+	const handleHistoryItemClick = (clickedSummaryItem) => {
+		setSummaryResponse(clickedSummaryItem);
 	};
 
 	return (
@@ -59,6 +84,17 @@ const Dashboard = () => {
 				{/* Request history takes 30% width */}
 				{/* Place your request history component or HTML here */}
 				<div>Request History</div>
+				<ul>
+					{requestHistory.map((req, ind) => (
+						<SummaryHistoryItem
+							active={`${summaryResponse?.id === req.id ? "true" : "false"}`}
+							key={req.id}
+							req={req}
+							ind={ind}
+							handleHistoryItemClick={handleHistoryItemClick}
+						/>
+					))}
+				</ul>
 			</div>
 			<div className="w-2/3 p-4">
 				{" "}
@@ -101,16 +137,16 @@ const Dashboard = () => {
 					className="api-response bg-gray-200 p-4 m-6 rounded shadow-md overflow-auto"
 					style={{ maxHeight: "500px" }}
 				>
-					{apiResponse ? (
+					{summaryResponse ? (
 						<div>
 							<div className="h-3 mb-6 text-md font-bold">
 								Summary for the website:{" "}
 								<span className="text-lg text-blue-600">
 									{" "}
-									{lastRequestedUrl}{" "}
+									{summaryResponse.url}{" "}
 								</span>
 							</div>
-							<div>{apiResponse}</div>
+							<div>{summaryResponse.content}</div>
 						</div>
 					) : (
 						"Enter some URL to get the summary"

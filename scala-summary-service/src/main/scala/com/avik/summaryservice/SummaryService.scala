@@ -5,11 +5,11 @@ import sttp.client3.*
 import sttp.client3.asynchttpclient.future.AsyncHttpClientFutureBackend
 import sttp.model.StatusCode
 
+import java.util.List as JList
 import java.util.concurrent.CompletableFuture
-import java.util.{List => JList}
-import scala.jdk.CollectionConverters.*
 import scala.compat.java8.FutureConverters.*
 import scala.concurrent.{ExecutionContext, Future}
+import scala.jdk.CollectionConverters.*
 
 object SummaryService {
   implicit val backend: SttpBackend[Future, Any] = AsyncHttpClientFutureBackend()
@@ -57,13 +57,27 @@ object SummaryService {
   }
 
 
+//  def fetchAndSaveSummary(url: String, username: String)(implicit ec: ExecutionContext)
+//  : CompletableFuture[String] = {
+//    val scalaFuture = (for {
+//      _ <- Database.initSchema
+//      summary <- getSummary(url)
+//      _ <- Database.saveSummary(Summary(url, username, summary))
+//    } yield summary).recoverWith {
+//      case ex: Exception =>
+//        Future.failed(ex)
+//    }
+//    scalaFuture.toJava.toCompletableFuture
+//  }
+
   def fetchAndSaveSummary(url: String, username: String)(implicit ec: ExecutionContext)
-  : CompletableFuture[String] = {
+  : CompletableFuture[Summary] = {
     val scalaFuture = (for {
       _ <- Database.initSchema
       summary <- getSummary(url)
-      _ <- Database.saveSummary(Summary(url, username, summary))
-    } yield summary).recoverWith {
+      summaryObj = Summary(url, username, summary)
+      _ <- Database.saveSummary(summaryObj)
+    } yield summaryObj).recoverWith {
       case ex: Exception =>
         Future.failed(ex)
     }

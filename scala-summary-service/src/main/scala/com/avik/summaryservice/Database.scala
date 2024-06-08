@@ -1,15 +1,13 @@
 package com.avik.summaryservice
 
-import slick.jdbc.PostgresProfile.api.Database as SlickDatabase
-import slick.jdbc.PostgresProfile.api.*
-
-import scala.concurrent.{ExecutionContext, Future}
-import slick.jdbc.meta.MTable
 import org.slf4j.LoggerFactory
+import slick.jdbc.PostgresProfile.api.{Database as SlickDatabase, *}
+import slick.jdbc.meta.MTable
 
 import java.sql.Timestamp
 import java.time.Instant
 import java.util.UUID
+import scala.concurrent.{ExecutionContext, Future}
 
 //case class Summary(url: String, username: String, content: String)
 case class Summary(url: String, username: String, content: String, timestamp: Timestamp = Timestamp
@@ -67,7 +65,7 @@ object Database {
   }
 
   def fetchSummariesByUsername(username: String)(implicit ec: ExecutionContext): Future[Seq[Summary]] = {
-    db.run(summaries.filter(_.username === username).result).recoverWith {
+    db.run(summaries.filter(_.username === username).sortBy(_.timestamp.desc).result).recoverWith {
       case ex: Exception =>
         logger.error("Error fetching all summaries", ex)
         Future.failed(ex)

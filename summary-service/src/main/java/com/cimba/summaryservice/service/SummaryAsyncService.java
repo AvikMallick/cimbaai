@@ -36,9 +36,9 @@ public class SummaryAsyncService {
         executorService.shutdown();
     }
 
-    public CompletableFuture<String> fetchSummaryAsync(RequestDTO requestDTO, String username) {
+    public CompletableFuture<Summary> fetchSummaryAsync(RequestDTO requestDTO, String username) {
         // Use the shared ExecutionContext to fetch and save the summary asynchronously
-        CompletableFuture<String> futureSummary =
+        CompletableFuture<Summary> futureSummary =
                 SummaryService.fetchAndSaveSummary(requestDTO.getUrl(), username, executionContext);
 
         return futureSummary;

@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class SummaryDTO {
+    private String id;
     private String url;
     private String username;
     private String content;
@@ -18,6 +19,7 @@ public class SummaryDTO {
 
     public static SummaryDTO convertToDTO(Summary summary) {
         SummaryDTO summaryDTO = new SummaryDTO();
+        summaryDTO.setId(summary.id());
         summaryDTO.setUrl(summary.url());
         summaryDTO.setUsername(summary.username());
         summaryDTO.setContent(summary.content());
