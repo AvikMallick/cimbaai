@@ -9,17 +9,8 @@ import java.time.Instant
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
-//case class Summary(url: String, username: String, content: String)
 case class Summary(url: String, username: String, content: String, timestamp: Timestamp = Timestamp
   .from(Instant.now()), id: String = UUID.randomUUID().toString)
-
-//class Summaries(tag: Tag) extends Table[Summary](tag, "summaries") {
-//  def url = column[String]("url", O.PrimaryKey)
-//  def username = column[String]("username")
-//  def content = column[String]("content")
-//
-//  def * = (url, username, content) <> ((Summary.apply _).tupled, Summary.unapply)
-//}
 
 class Summaries(tag: Tag) extends Table[Summary](tag, "summaries") {
   def id = column[String]("id", O.PrimaryKey)
@@ -30,8 +21,6 @@ class Summaries(tag: Tag) extends Table[Summary](tag, "summaries") {
 
   def * = (url, username, content, timestamp, id) <> ((Summary.apply _).tupled, Summary.unapply)
 
-  // Define the primary key as a combination of url and username
-//  def pk = primaryKey("pk_summaries", (url, username, timestamp))
 }
 
 object Database {
