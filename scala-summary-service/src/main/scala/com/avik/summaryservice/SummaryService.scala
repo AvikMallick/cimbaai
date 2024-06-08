@@ -6,6 +6,8 @@ import sttp.client3.asynchttpclient.future.AsyncHttpClientFutureBackend
 import sttp.model.StatusCode
 
 import java.util.concurrent.CompletableFuture
+import java.util.{List => JList}
+import scala.jdk.CollectionConverters.*
 import scala.compat.java8.FutureConverters.*
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -67,6 +69,14 @@ object SummaryService {
     }
     scalaFuture.toJava.toCompletableFuture
   }
+
+  def fetchSummariesByUsername(username: String)(implicit ec: ExecutionContext): CompletableFuture[JList[Summary]] = {
+  val scalaFuture = Database.fetchSummariesByUsername(username).map(_.toList.asJava).recoverWith {
+    case ex: Exception =>
+      Future.failed(ex)
+  }
+  scalaFuture.toJava.toCompletableFuture
+}
 
 //  def shutdown(): Unit = {
 //    backend.close()

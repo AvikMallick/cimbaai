@@ -1,7 +1,13 @@
 package com.cimba.summaryservice.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
 
+
+@Data
+@Builder
 public class AuthenticationResponse {
     @JsonProperty("access_token")
     private String accessToken;
@@ -18,15 +24,4 @@ public class AuthenticationResponse {
         this.refreshToken = refreshToken;
     }
 
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public String getMessage() {
-        return message;
-    }
 }

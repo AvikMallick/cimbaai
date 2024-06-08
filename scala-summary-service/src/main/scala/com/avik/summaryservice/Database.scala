@@ -9,10 +9,11 @@ import org.slf4j.LoggerFactory
 
 import java.sql.Timestamp
 import java.time.Instant
+import java.util.UUID
 
 //case class Summary(url: String, username: String, content: String)
 case class Summary(url: String, username: String, content: String, timestamp: Timestamp = Timestamp
-  .from(Instant.now()))
+  .from(Instant.now()), id: String = UUID.randomUUID().toString)
 
 //class Summaries(tag: Tag) extends Table[Summary](tag, "summaries") {
 //  def url = column[String]("url", O.PrimaryKey)
@@ -23,15 +24,16 @@ case class Summary(url: String, username: String, content: String, timestamp: Ti
 //}
 
 class Summaries(tag: Tag) extends Table[Summary](tag, "summaries") {
+  def id = column[String]("id", O.PrimaryKey)
   def url = column[String]("url")
   def username = column[String]("username")
   def content = column[String]("content")
   def timestamp = column[Timestamp]("timestamp", O.Default(Timestamp.from(Instant.now())))
 
-  def * = (url, username, content, timestamp) <> ((Summary.apply _).tupled, Summary.unapply)
+  def * = (url, username, content, timestamp, id) <> ((Summary.apply _).tupled, Summary.unapply)
 
   // Define the primary key as a combination of url and username
-  def pk = primaryKey("pk_summaries", (url, username, timestamp))
+//  def pk = primaryKey("pk_summaries", (url, username, timestamp))
 }
 
 object Database {
@@ -60,6 +62,14 @@ object Database {
     db.run(summaries += summary).recoverWith {
       case ex: Exception =>
         logger.error("Error saving summary", ex)
+        Future.failed(ex)
+    }
+  }
+
+  def fetchSummariesByUsername(username: String)(implicit ec: ExecutionContext): Future[Seq[Summary]] = {
+    db.run(summaries.filter(_.username === username).result).recoverWith {
+      case ex: Exception =>
+        logger.error("Error fetching all summaries", ex)
         Future.failed(ex)
     }
   }

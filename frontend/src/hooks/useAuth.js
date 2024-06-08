@@ -12,7 +12,6 @@ const useAuth = () => {
 						"Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
 					},
 				});
-				console.log(response);
 				setIsAuthenticated(response.data.valid);
 			} catch (error) {
 				setIsAuthenticated(false);

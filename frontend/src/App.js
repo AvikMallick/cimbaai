@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./components/PrivateRoute";
+import ErrorPage from "./pages/ErrorPage";
 
 const App = () => {
 	return (
@@ -24,6 +25,7 @@ const App = () => {
 					}
 				/>
 				<Route path="/" element={<Navigate to="/login" />} />
+				<Route path="*" element={<ErrorPage />} />
 			</Routes>
 		</Router>
 	);

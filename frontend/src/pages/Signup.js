@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 
@@ -6,6 +6,12 @@ const Signup = () => {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		// Clear tokens from local storage whenever this component mounts
+		localStorage.removeItem("accessToken");
+		localStorage.removeItem("refreshToken");
+	}, []);
 
 	const handleSignup = async (e) => {
 		e.preventDefault();
@@ -17,10 +23,13 @@ const Signup = () => {
 			console.log(localStorage.getItem("accessToken"));
 			console.log(localStorage.getItem("refreshToken"));
 			navigate("/dashboard");
-			// navigate("/login");
 		} catch (error) {
 			console.error(error);
 		}
+	};
+
+	const goToLogin = () => {
+		navigate("/login");
 	};
 
 	return (
@@ -53,6 +62,13 @@ const Signup = () => {
 					className="w-full bg-blue-500 text-white p-2 rounded"
 				>
 					Signup
+				</button>
+
+				<button
+					onClick={goToLogin}
+					className="mt-4 w-full bg-green-500 text-white p-2 rounded"
+				>
+					Go to Login page
 				</button>
 			</form>
 		</div>

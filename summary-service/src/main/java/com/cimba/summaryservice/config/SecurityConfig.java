@@ -45,7 +45,7 @@ public class SecurityConfig {
                         req->req.requestMatchers("/login/**", "/register/**", "/refresh_token/**"
                                         , "/validate_token")
                                 .permitAll()
-                                .requestMatchers("/get-summary").hasAnyRole(Role.USER.name())
+                                .requestMatchers("/get-summary", "/get-summary-history").hasAnyRole(Role.USER.name())
                                 .anyRequest()
                                 .authenticated()
 //                        req -> req.anyRequest().permitAll()

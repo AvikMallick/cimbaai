@@ -1,11 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 
 const Login = () => {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
+	const [loginError, setLoginError] = useState(false); // Step 1
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		// Clear tokens from local storage whenever this component mounts
+		localStorage.removeItem("accessToken");
+		localStorage.removeItem("refreshToken");
+	}, []);
 
 	const handleLogin = async (e) => {
 		e.preventDefault();
@@ -14,16 +21,22 @@ const Login = () => {
 				username: username,
 				password: password,
 			});
+			setLoginError(false);
 
-			// console.log(response);
 			localStorage.setItem("accessToken", response.data.access_token);
 			localStorage.setItem("refreshToken", response.data.refresh_token);
-			// console.log(localStorage.getItem("accessToken"));
-			// console.log(localStorage.getItem("refreshToken"));
+
 			navigate("/dashboard");
 		} catch (error) {
+			if (error.response.status === 404) {
+				setLoginError(true);
+			}
 			console.error(error);
 		}
+	};
+
+	const goToSignup = () => {
+		navigate("/signup");
 	};
 
 	return (
@@ -56,6 +69,19 @@ const Login = () => {
 					className="w-full bg-blue-500 text-white p-2 rounded"
 				>
 					Login
+				</button>
+				{/* Conditional Error Message */}
+				<div className={`${loginError ? "block" : "hidden"} text-red-500`}>
+					{" "}
+					{/* Step 3 */}
+					Wrong credentials, please try again.
+				</div>
+
+				<button
+					onClick={goToSignup}
+					className="mt-4 w-full bg-green-500 text-white p-2 rounded"
+				>
+					Go to Signup page
 				</button>
 			</form>
 		</div>

@@ -1,8 +1,10 @@
 package com.cimba.summaryservice.controller;
 
+import com.avik.summaryservice.Summary;
 import com.avik.summaryservice.SummaryService;
 
 import com.cimba.summaryservice.model.RequestDTO;
+import com.cimba.summaryservice.model.SummaryDTO;
 import com.cimba.summaryservice.service.SummaryAsyncService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +17,13 @@ import org.springframework.web.bind.annotation.*;
 import scala.concurrent.ExecutionContext;
 import scala.concurrent.ExecutionContextExecutor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 //@RestController
 //public class SummaryController {
@@ -98,8 +103,37 @@ public class SummaryController {
         }
     }
 
-    @GetMapping("/get-request-history")
-    public ResponseEntity<String> getRequestHistory() {
-        return ResponseEntity.ok("demo request history");
+    @GetMapping("/get-summary-history")
+    public ResponseEntity<List<SummaryDTO>> getSummaryHistory() {
+        // Get the authenticated user's username
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        // Fetch summaries by username asynchronously using the async service
+        CompletableFuture<List<Summary>> futureAllSummaries = summaryAsyncService.fetchSummariesByUsernameAsync(username);
+
+        try {
+        List<SummaryDTO> summaryDTOList = futureAllSummaries.get().stream()
+                .map(SummaryDTO::convertToDTO)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(summaryDTOList);
+    } catch (InterruptedException | ExecutionException e) {
+        throw new RuntimeException("Error fetching summary history. Server Error: ", e);
+    }
+
+//        try {
+//            ResponseEntity<List<Summary>> listResponseEntity =
+//                    futureAllSummaries.thenApply(ResponseEntity::ok).exceptionally(ex -> {
+//                        List<SummaryDTO> emptySummaries = new ArrayList<SummaryDTO>();
+//                        return new ResponseEntity<>(emptySummaries, HttpStatus.INTERNAL_SERVER_ERROR);
+//                    }).get();
+//
+//            List<SummaryDTO> summaries =
+//            System.out.println("Returning the summary history" + listResponseEntity.getBody());
+//            return listResponseEntity;
+//        } catch (InterruptedException | ExecutionException e) {
+//            throw new RuntimeException("Error fetching summary history. Server Error: ", e);
+//        }
     }
 }
