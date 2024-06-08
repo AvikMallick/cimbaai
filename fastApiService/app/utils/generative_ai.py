@@ -12,8 +12,7 @@ model = genai.GenerativeModel('gemini-1.5-flash')
 def generate_summary(text: str) -> str:
     # Define the prompt for the generative model
     prompt = (
-        "Give me the response fast, I am calling this via http which will give "
-        "timeout otherwise. Summarize the following text which is scraped from an url:\n\n"
+        "Summarize the following text which is scraped from an url:\n"
         f"{text}"
     )
 

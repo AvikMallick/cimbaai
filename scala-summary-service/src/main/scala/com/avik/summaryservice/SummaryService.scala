@@ -56,20 +56,6 @@ object SummaryService {
     }
   }
 
-
-//  def fetchAndSaveSummary(url: String, username: String)(implicit ec: ExecutionContext)
-//  : CompletableFuture[String] = {
-//    val scalaFuture = (for {
-//      _ <- Database.initSchema
-//      summary <- getSummary(url)
-//      _ <- Database.saveSummary(Summary(url, username, summary))
-//    } yield summary).recoverWith {
-//      case ex: Exception =>
-//        Future.failed(ex)
-//    }
-//    scalaFuture.toJava.toCompletableFuture
-//  }
-
   def fetchAndSaveSummary(url: String, username: String)(implicit ec: ExecutionContext)
   : CompletableFuture[Summary] = {
     val scalaFuture = (for {
@@ -84,16 +70,13 @@ object SummaryService {
     scalaFuture.toJava.toCompletableFuture
   }
 
-  def fetchSummariesByUsername(username: String)(implicit ec: ExecutionContext): CompletableFuture[JList[Summary]] = {
-  val scalaFuture = Database.fetchSummariesByUsername(username).map(_.toList.asJava).recoverWith {
-    case ex: Exception =>
-      Future.failed(ex)
+  def fetchSummariesByUsername(username: String)(implicit ec: ExecutionContext):
+  CompletableFuture[JList[Summary]] = {
+    val scalaFuture = Database.fetchSummariesByUsername(username).map(_.toList.asJava).recoverWith {
+      case ex: Exception =>
+        Future.failed(ex)
+    }
+    scalaFuture.toJava.toCompletableFuture
   }
-  scalaFuture.toJava.toCompletableFuture
-}
 
-//  def shutdown(): Unit = {
-//    backend.close()
-//    Database.close()
-//  }
 }
