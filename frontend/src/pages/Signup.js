@@ -8,20 +8,18 @@ const Signup = () => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		// Clear tokens from local storage whenever this component mounts
-		localStorage.removeItem("accessToken");
-		localStorage.removeItem("refreshToken");
+		const logout = async () => {
+			await api.post("/logout");
+		};
+		logout();
 	}, []);
 
 	const handleSignup = async (e) => {
 		e.preventDefault();
 		try {
 			const response = await api.post("/register", { username, password });
-			console.log(response);
 			localStorage.setItem("accessToken", response.data.access_token);
 			localStorage.setItem("refreshToken", response.data.refresh_token);
-			console.log(localStorage.getItem("accessToken"));
-			console.log(localStorage.getItem("refreshToken"));
 			navigate("/dashboard");
 		} catch (error) {
 			console.error(error);

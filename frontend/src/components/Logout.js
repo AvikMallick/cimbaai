@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
+import api from "../api";
 
 const Logout = () => {
 	const navigate = useNavigate();
 
-	const handleLogout = () => {
+	const handleLogout = async () => {
 		// Delete tokens from local storage
-		localStorage.removeItem("accessToken");
-		localStorage.removeItem("refreshToken");
+		await api.post("/logout");
 
 		// Navigate to login page after logout
 		navigate("/login");

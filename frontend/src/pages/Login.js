@@ -9,9 +9,10 @@ const Login = () => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		// Clear tokens from local storage whenever this component mounts
-		localStorage.removeItem("accessToken");
-		localStorage.removeItem("refreshToken");
+		const logout = async () => {
+			await api.post("/logout");
+		};
+		logout();
 	}, []);
 
 	const handleLogin = async (e) => {

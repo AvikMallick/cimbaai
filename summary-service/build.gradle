@@ -33,7 +33,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
     // Ensure this matches the Scala project details
-    implementation files('libs/scala-summary-service-1.0.0.jar')
+    implementation 'com.avik:scala-summary-service:0.1.0-SNAPSHOT'
+//    implementation files('libs/scala-summary-service-1.0.0.jar')
 
     // Update jjwt dependency to the latest version
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
