@@ -81,10 +81,10 @@ const Dashboard = () => {
 		<div className="min-h-screen mx-auto p-12 bg-gray-100 flex flex-col md:flex-row">
 			<Logout />
 			{/* Flex container for side-by-side layout */}
-			<div className="w-full md:w-1/3 bg-white p-6 rounded shadow-md mx-2 my-4">
+			<div className="w-full md:w-1/3 bg-white px-0 py-2 rounded shadow-md mx-2 my-4">
 				{" "}
 				{/* All request history */}
-				<div>Request History</div>
+				<div className="p-2">Request History</div>
 				<div className="overflow-auto p-2" style={{ maxHeight: "600px" }}>
 					<ul>
 						{requestHistory.map((req, ind) => (
@@ -157,7 +157,7 @@ const Dashboard = () => {
 									Time: {extractTime(summaryResponse.timestamp)}
 								</div>
 							</div>
-							<div>{summaryResponse.content}</div>
+							<div className="px-2 py-6">{summaryResponse.content}</div>
 						</div>
 					) : (
 						"Enter a URL to get the summary"

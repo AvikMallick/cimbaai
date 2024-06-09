@@ -5,10 +5,19 @@ plugins {
 }
 
 group = 'com.avik'
-version = '0.1.0-SNAPSHOT'
+version = '1.0.0'
 
 repositories {
     mavenCentral()
+}
+
+jar {
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    manifest {
+        attributes 'Implementation-Title': 'Scala-Summary-Service',
+           'Implementation-Version': version
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 dependencies {
