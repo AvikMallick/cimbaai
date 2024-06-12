@@ -11,7 +11,7 @@ router = APIRouter()  # Create API router
 @router.get("/summary")
 async def summarize_url(url: HttpUrl):  # Take URL as query parameter
     try:
-        async with AsyncClient() as client:  # Create HTTP client
+        async with AsyncClient() as client:  # Create HTTP client, which auto closes
             response = await client.get(str(url))  # Get URL content
             response.raise_for_status()  # Raise exception if status is not 200
     except HTTPStatusError as e:
