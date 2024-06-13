@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: react
+  labels:
+    app: react
 spec:
   replicas: 1
   selector:
@@ -17,3 +19,42 @@ spec:
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         ports:
         - containerPort: 3000
+        env:
+        - name: REACT_APP_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: react-config
+              key: REACT_APP_API_BASE_URL
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+
+
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: react
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: react
+#   template:
+#     metadata:
+#       labels:
+#         app: react
+#     spec:
+#       containers:
+#       - name: react
+#         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+#         ports:
+#         - containerPort: 3000

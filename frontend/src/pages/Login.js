@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
+import config from "../config";
 
 const Login = () => {
 	const [username, setUsername] = useState("");
@@ -17,6 +18,8 @@ const Login = () => {
 
 	const handleLogin = async (e) => {
 		e.preventDefault();
+		console.log("baseUrl: ", config.apiBaseUrl);
+
 		try {
 			const response = await api.post("/login", {
 				username: username,
@@ -29,7 +32,7 @@ const Login = () => {
 
 			navigate("/dashboard");
 		} catch (error) {
-			if (error.response.status === 404) {
+			if (error?.response?.status === 404) {
 				setLoginError(true);
 			}
 			console.error(error);

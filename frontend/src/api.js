@@ -1,10 +1,10 @@
-// src/api.js
 import axios from "axios";
+import config from "./config.js";
 // import { useNavigate } from "react-router-dom";
 
 const api = axios.create({
+	baseURL: config.apiBaseUrl
 	// baseURL: "http://localhost:8080",
-	baseURL: "http://springboot:8080",
 });
 
 api.interceptors.request.use(
@@ -22,7 +22,7 @@ api.interceptors.response.use(
 	(response) => response,
 	async (error) => {
 		const originalRequest = error.config;
-		if (error.response.status === 401 && !originalRequest._retry) {
+		if (error?.response?.status === 401 && !originalRequest._retry) {
 			originalRequest._retry = true;
 			try {
 				const refreshToken = localStorage.getItem("refreshToken");
