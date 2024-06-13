@@ -5,6 +5,8 @@ import com.cimba.summaryservice.model.RequestDTO;
 import com.cimba.summaryservice.model.SummaryDTO;
 import com.cimba.summaryservice.service.SummaryAsyncService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -73,6 +75,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SummaryController {
 
+    private static final Logger logger = LoggerFactory.getLogger(SummaryController.class);
     private final SummaryAsyncService summaryAsyncService;
 
     @PostMapping("/get-summary")
@@ -91,12 +94,14 @@ public class SummaryController {
                 SummaryDTO summaryDTO = SummaryDTO.convertToDTO(summary);
                 return ResponseEntity.ok(summaryDTO);
             }).exceptionally(ex -> {
+                logger.error("Error fetching summary: " + ex.getMessage(), ex);
                 if (ex.getMessage().contains("404")) {
                     return new ResponseEntity<>(HttpStatus.NOT_FOUND);
                 }
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }).get();
         } catch (InterruptedException | ExecutionException e) {
+            logger.error("Error fetching summary. Server Error: ", e);
             throw new RuntimeException("Error fetching summary. Server Error: ", e);
         }
 
@@ -118,6 +123,7 @@ public class SummaryController {
 
         return ResponseEntity.ok(summaryDTOList);
     } catch (InterruptedException | ExecutionException e) {
+            logger.error("Error fetching summary history. Server Error: ", e);
         throw new RuntimeException("Error fetching summary history. Server Error: ", e);
     }
 

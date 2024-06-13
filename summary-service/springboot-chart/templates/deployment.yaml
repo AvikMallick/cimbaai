@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springboot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: springboot
+  template:
+    metadata:
+      labels:
+        app: springboot
+    spec:
+      containers:
+      - name: springboot
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: "{{ .Values.database.url }}"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "{{ .Values.database.username }}"
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: "{{ .Values.database.password }}"

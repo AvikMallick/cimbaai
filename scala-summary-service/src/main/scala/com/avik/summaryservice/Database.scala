@@ -38,6 +38,7 @@ object Database {
 
   // Function to initialize the schema
   def initSchema(implicit ec: ExecutionContext): Future[Unit] = {
+    logger.info("Initializing schema...")
     db.run(MTable.getTables("summaries")).flatMap { tables =>
       if (tables.isEmpty) {
         logger.info("Creating summaries table...")
@@ -55,6 +56,7 @@ object Database {
 
   // Function to save a summary, returns the number of rows affected
   def saveSummary(summary: Summary)(implicit ec: ExecutionContext): Future[Int] = {
+    logger.info(s"Saving summary for URL: ${summary.url} and username: ${summary.username}")
     db.run(summaries += summary).recoverWith {
       case ex: Exception =>
         logger.error("Error saving summary", ex)
@@ -64,6 +66,7 @@ object Database {
 
   // Function to fetch summaries by username
   def fetchSummariesByUsername(username: String)(implicit ec: ExecutionContext): Future[Seq[Summary]] = {
+    logger.info(s"Fetching summaries by username: $username")
     db.run(summaries.filter(_.username === username).sortBy(_.timestamp.desc).result).recoverWith {
       case ex: Exception =>
         logger.error("Error fetching all summaries", ex)
