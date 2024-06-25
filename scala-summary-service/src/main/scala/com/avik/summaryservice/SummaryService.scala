@@ -1,6 +1,7 @@
 package com.avik.summaryservice
 
 import io.circe.parser.*
+import org.slf4j.LoggerFactory
 import sttp.client3.*
 import sttp.client3.asynchttpclient.future.AsyncHttpClientFutureBackend
 import sttp.model.StatusCode
@@ -10,7 +11,6 @@ import java.util.concurrent.CompletableFuture
 import scala.compat.java8.FutureConverters.*
 import scala.concurrent.{ExecutionContext, Future}
 import scala.jdk.CollectionConverters.*
-import org.slf4j.LoggerFactory
 
 object SummaryService {
   implicit val backend: SttpBackend[Future, Any] = AsyncHttpClientFutureBackend()
@@ -50,7 +50,7 @@ object SummaryService {
         if (response.code == StatusCode.NotFound) {
           logger.warn(s"URL not found: $url")
           // If the status code is 404, return a personalized message
-          Future.failed(new Exception("404"))
+          Future.failed(new Exception("No URL found, 404"))
         } else {
           logger.error(s"HTTP error for URL: $url", response.statusText)
           // If the status code is not 404, return a failed Future
@@ -85,7 +85,8 @@ object SummaryService {
   CompletableFuture[JList[Summary]] = {
     logger.info(s"Fetching summaries by username: $username")
     // _.toList.asJava is equivalent to (summaries: Seq[Summary]) => summaries.toList.asJava
-    val scalaFuture = Database.fetchSummariesByUsername(username).map(_.toList.asJava).recoverWith {
+    val scalaFuture =
+      Database.fetchSummariesByUsername(username).map(_.toList.asJava).recoverWith {
       case ex: Exception =>
         logger.error(s"Exception occurred while fetching summaries by username: $username", ex)
         Future.failed(ex)
