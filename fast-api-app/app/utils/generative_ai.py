@@ -8,6 +8,7 @@ genai.configure(api_key=settings.genai_api_key)
 # Initialize the generative model
 model = genai.GenerativeModel('gemini-1.5-flash')
 
+
 # Function to generate a summary for a given text
 async def generate_summary(text: str) -> str:
     # Define the prompt for the generative model
